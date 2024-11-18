@@ -1,0 +1,26 @@
+{
+  "name": "odin-battleship",
+  "version": "1.0.0",
+  "description": "Battleship game for TOP",
+  "main": "dom.js",
+  "scripts": {
+    "test": "jest",
+    "watch": "jest --watch-all"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mojoro/odin-battleship.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mojoro/odin-battleship/issues"
+  },
+  "homepage": "https://github.com/mojoro/odin-battleship#readme",
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0"
+  }
+}
