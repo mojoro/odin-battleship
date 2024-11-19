@@ -10,7 +10,7 @@ playerTwoElements.wrapper = document.getElementById("player2");
 playerTwoElements.name = playerTwoElements.wrapper.firstElementChild;
 playerTwoElements.board = playerTwoElements.name.nextElementSibling;
 
-const render = new Renderer();
+const render = new Renderer(playerOneElements, playerTwoElements);
 render.setText(playerOneElements.name, "John");
 render.setText(playerTwoElements.name, "Computer");
 
@@ -21,5 +21,3 @@ render.initialRender(playerOneElements.board, playerOne);
 render.initialRender(playerTwoElements.board, playerTwo);
 render.renderBoard(playerOneElements.board, playerOne.gameboard.board);
 render.renderBoard(playerTwoElements.board, playerTwo.gameboard.board);
-
-document.getElementById("player2").first;

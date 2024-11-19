@@ -1,5 +1,9 @@
 class Renderer {
-  constructor() {}
+  constructor(playerOneElements, playerTwoElements) {
+    this.playerOneElements = playerOneElements;
+    this.playerTwoElements = playerTwoElements;
+    this.winScreen = document.querySelector(".win-screen");
+  }
 
   setText(element, name) {
     element.textContent = name;
@@ -13,6 +17,8 @@ class Renderer {
         cell.addEventListener("click", () => {
           player.gameboard.receiveAttack([x, y]);
           this.renderBoard(boardElement, player.gameboard.board);
+          this.switchTurn();
+          this.evaluateWin(player);
         });
         boardElement.appendChild(cell);
       }
@@ -27,6 +33,17 @@ class Renderer {
         currentCell = currentCell.nextElementSibling;
       }
     }
+  }
+
+  switchTurn() {
+    this.playerOneElements.wrapper.classList.toggle("active-target");
+    this.playerTwoElements.wrapper.classList.toggle("active-target");
+    this.playerOneElements.board.classList.toggle("awaiting-turn");
+    this.playerTwoElements.board.classList.toggle("awaiting-turn");
+  }
+
+  evaluateWin(player) {
+    if (!player.gameboard.allSunk()) return;
   }
 }
 
