@@ -22,10 +22,51 @@ test("Gameboard can place ships", () => {
   const testBoard = new Gameboard();
   testBoard.placeShip(testShip, "up", [4, 4]);
   expect(
-    testBoard.board[4][4] &&
-      testBoard.board[4][5] &&
-      testBoard.board[4][6] &&
-      testBoard.board[4][7] &&
-      testBoard.board[4][8]
+    testBoard.board[4][4].ship &&
+      testBoard.board[4][5].ship &&
+      testBoard.board[4][6].ship &&
+      testBoard.board[4][7].ship &&
+      testBoard.board[4][8].ship
   ).toBe(testShip);
+});
+
+test("Gameboard won't place ships on top of each other", () => {
+  const testShip1 = new Ship(5);
+  const testBoard = new Gameboard();
+  const testShip2 = new Ship(3);
+
+  testBoard.placeShip(testShip1, "up", [4, 4]);
+  expect(() => testBoard.placeShip(testShip2, "up", [4, 4])).toThrow();
+});
+
+test("Gameboard records hits", () => {
+  const testShip = new Ship(3);
+  const testBoard = new Gameboard();
+  testBoard.placeShip(testShip, "down", [4, 4]);
+  testBoard.receiveAttack([4, 4]);
+  expect(testBoard.board[4][4].status).toBe("hit");
+});
+
+test("Gameboard records misses", () => {
+  const testShip = new Ship(3);
+  const testBoard = new Gameboard();
+  testBoard.placeShip(testShip, "down", [4, 4]);
+  testBoard.receiveAttack([4, 5]);
+  expect(testBoard.board[4][5].status).toBe("miss");
+});
+
+test("Gameboard detects when all ships are sunk", () => {
+  const testShip = new Ship(3);
+  const testBoard = new Gameboard();
+  const testShip2 = new Ship(5);
+  testBoard.placeShip(testShip2, "up", [4, 4]);
+  testBoard.placeShip(testShip, "down", [4, 3]);
+  testBoard.receiveAttack([4, 3]).receiveAttack([4, 2]).receiveAttack([4, 1]);
+  testBoard
+    .receiveAttack([4, 4])
+    .receiveAttack([4, 5])
+    .receiveAttack([4, 6])
+    .receiveAttack([4, 7])
+    .receiveAttack([4, 8]);
+  expect(testBoard.allSunk()).toBeTruthy();
 });
