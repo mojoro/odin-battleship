@@ -17,11 +17,12 @@ class Renderer {
       for (let y = 0; y < player.gameboard.board[x].length; y++) {
         const cell = document.createElement("div");
         cell.addEventListener("click", () => {
-          if (player.gameboard.board[x][y].status == "untouched")
+          if (player.gameboard.board[x][y].status == "untouched") {
+            player.gameboard.receiveAttack([x, y]);
             this.switchTurn();
-          player.gameboard.receiveAttack([x, y]);
-          this.renderBoard(boardElement, player.gameboard.board);
-          this.evaluateWin(player);
+            this.renderBoard(boardElement, player.gameboard.board);
+            this.evaluateWin(player);
+          }
         });
         boardElement.appendChild(cell);
       }
