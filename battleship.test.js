@@ -1,5 +1,6 @@
 import { Ship } from "./ship";
 import { Gameboard } from "./gameboard";
+import { Player } from "./player";
 
 test("Ship sinks after fully hit", () => {
   const testShip = new Ship(5);
@@ -69,4 +70,18 @@ test("Gameboard detects when all ships are sunk", () => {
     .receiveAttack([4, 7])
     .receiveAttack([4, 8]);
   expect(testBoard.allSunk()).toBeTruthy();
+});
+
+test("Player has two types", () => {
+  const player1 = new Player("human");
+  const player2 = new Player("computer");
+  expect(player1.type).toBe("human");
+  expect(player2.type).toBe("computer");
+});
+
+test("Players have gameboards", () => {
+  const player1 = new Player("human");
+  const player2 = new Player("computer");
+  expect(player1.gameboard).toBeTruthy();
+  expect(player2.gameboard).toBeTruthy();
 });
