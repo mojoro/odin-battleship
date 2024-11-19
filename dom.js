@@ -1,7 +1,9 @@
 class Renderer {
-  constructor(playerOneElements, playerTwoElements) {
+  constructor(playerOneElements, playerTwoElements, playerOne, playerTwo) {
     this.playerOneElements = playerOneElements;
     this.playerTwoElements = playerTwoElements;
+    this.playerOne = playerOne;
+    this.playerTwo = playerTwo;
     this.winScreen = document.querySelector(".win-screen");
   }
 
@@ -15,9 +17,10 @@ class Renderer {
       for (let y = 0; y < player.gameboard.board[x].length; y++) {
         const cell = document.createElement("div");
         cell.addEventListener("click", () => {
+          if (player.gameboard.board[x][y].status == "untouched")
+            this.switchTurn();
           player.gameboard.receiveAttack([x, y]);
           this.renderBoard(boardElement, player.gameboard.board);
-          this.switchTurn();
           this.evaluateWin(player);
         });
         boardElement.appendChild(cell);
@@ -42,8 +45,28 @@ class Renderer {
     this.playerTwoElements.board.classList.toggle("awaiting-turn");
   }
 
-  evaluateWin(player) {
-    if (!player.gameboard.allSunk()) return;
+  // refactor this it is so ugly
+  evaluateWin() {
+    if (
+      !this.playerOne.gameboard.allSunk() &&
+      !this.playerTwo.gameboard.allSunk()
+    )
+      return;
+    if (this.playerOne.gameboard.allSunk()) {
+      this.winScreen.firstElementChild.firstElementChild.textContent = `${this.playerTwo.name} wins!`;
+      this.winScreen.firstElementChild.lastElementChild.addEventListener(
+        "click",
+        () => {}
+      );
+      this.winScreen.id = "";
+    } else if (this.playerTwo.gameboard.allSunk()) {
+      this.winScreen.firstElementChild.firstElementChild.textContent = `${this.playerOne.name} wins!`;
+      this.winScreen.firstElementChild.lastElementChild.addEventListener(
+        "click",
+        () => {}
+      );
+      this.winScreen.id = "";
+    }
   }
 }
 
