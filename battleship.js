@@ -20,8 +20,18 @@ function beginGame() {
   render.setText(playerTwoElements.name, playerTwo.name);
 
   render.resetBoards();
-  render.initialRender(playerOneElements.board, playerOne);
-  render.initialRender(playerTwoElements.board, playerTwo);
+  render.initialRender(
+    playerOneElements.board,
+    playerTwoElements.board,
+    playerOne,
+    playerTwo
+  );
+  render.initialRender(
+    playerTwoElements.board,
+    playerOneElements.board,
+    playerTwo,
+    playerOne
+  );
   render.renderBoard(playerOneElements.board, playerOne.gameboard.board);
   render.renderBoard(playerTwoElements.board, playerTwo.gameboard.board);
 
@@ -48,5 +58,15 @@ function evaluateWin(playerOne, playerTwo) {
       winner = playerOne.name;
     }
     render.displayWin(winner);
+  };
+}
+
+function cellListener(currentPlayer, currentPlayerElement, opponentPlayer) {
+  return function () {
+    if (currentPlayer.gameboard.board[x][y].status == "untouched") {
+      currentPlayer.gameboard.receiveAttack([x, y]);
+      render.switchTurn();
+      render.renderBoard(currentPlayerElement, currentPlayer.gameboard.board);
+    }
   };
 }

@@ -20,18 +20,34 @@ class Renderer {
     this.playerTwoElements.wrapper.appendChild(this.playerTwoElements.board);
   }
 
-  initialRender(boardElement, player) {
-    for (let x = 0; x < player.gameboard.board.length; x++) {
-      for (let y = 0; y < player.gameboard.board[x].length; y++) {
+  initialRender(
+    currentBoardElement,
+    opponentBoardElement,
+    currentPlayer,
+    opponentPlayer
+  ) {
+    for (let x = 0; x < currentPlayer.gameboard.board.length; x++) {
+      for (let y = 0; y < currentPlayer.gameboard.board[x].length; y++) {
         const cell = document.createElement("div");
         cell.addEventListener("click", () => {
-          if (player.gameboard.board[x][y].status == "untouched") {
-            player.gameboard.receiveAttack([x, y]);
+          if (currentPlayer.gameboard.board[x][y].status == "untouched") {
+            currentPlayer.gameboard.receiveAttack([x, y]);
             this.switchTurn();
-            this.renderBoard(boardElement, player.gameboard.board);
+            this.renderBoard(
+              currentBoardElement,
+              currentPlayer.gameboard.board
+            );
+          }
+          if (currentPlayer.type == "computer") {
+            opponentPlayer.receiveComputerMove();
+            this.switchTurn();
+            this.renderBoard(
+              opponentBoardElement,
+              opponentPlayer.gameboard.board
+            );
           }
         });
-        boardElement.appendChild(cell);
+        currentBoardElement.appendChild(cell);
       }
     }
   }
