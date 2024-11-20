@@ -28,6 +28,7 @@ class Gameboard {
       this.board.push(column);
     }
     this.ships = [];
+    this.length = this.board.length;
   }
 
   placeShip(ship, direction, startingCoords) {

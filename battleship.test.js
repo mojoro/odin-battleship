@@ -85,3 +85,21 @@ test("Players have gameboards", () => {
   expect(player1.gameboard).toBeTruthy();
   expect(player2.gameboard).toBeTruthy();
 });
+
+for (let i = 0; i < 20; i++) {
+  test("Players can generate valid random attacks", () => {
+    const player = new Player("computer");
+    const sentCoords = player.receiveComputerMove();
+    expect(sentCoords[0] && sentCoords[1]).toBeGreaterThanOrEqual(0);
+    expect(sentCoords[0] && sentCoords[1]).toBeLessThanOrEqual(
+      player.gameboard.length - 1
+    );
+  });
+}
+
+test("Player gameboard updates after receiveComputerMove()", () => {
+  const player = new Player("computer");
+  const sentCoords = player.receiveComputerMove();
+  const [x, y] = sentCoords;
+  expect(player.gameboard.board[x][y].status).not.toBe("untouched");
+});

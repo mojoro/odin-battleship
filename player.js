@@ -8,6 +8,15 @@ class Player {
     this.gameboard = new Gameboard();
     this.gameboard.placeShip(new Ship(4), "up", [0, 0]);
   }
+
+  receiveComputerMove() {
+    const firstCoord =
+      Math.floor(Math.random() * 100) % (this.gameboard.length - 1);
+    const secondCoord =
+      Math.floor(Math.random() * 100) % (this.gameboard.length - 1);
+    this.gameboard.receiveAttack([firstCoord, secondCoord]);
+    return [firstCoord, secondCoord];
+  }
 }
 
 export { Player };
