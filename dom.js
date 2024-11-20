@@ -30,7 +30,8 @@ class Renderer {
       for (let y = 0; y < currentPlayer.gameboard.board[x].length; y++) {
         const cell = document.createElement("div");
         cell.addEventListener("click", () => {
-          if (currentPlayer.gameboard.board[x][y].status == "untouched") {
+          let status = currentPlayer.gameboard.board[x][y].status;
+          if (status == "untouched") {
             currentPlayer.gameboard.receiveAttack([x, y]);
             this.switchTurn();
             this.renderBoard(
@@ -38,7 +39,7 @@ class Renderer {
               currentPlayer.gameboard.board
             );
           }
-          if (currentPlayer.type == "computer") {
+          if (currentPlayer.type == "computer" && status == "untouched") {
             opponentPlayer.receiveComputerMove();
             this.switchTurn();
             this.renderBoard(
