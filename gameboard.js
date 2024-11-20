@@ -31,6 +31,7 @@ class Gameboard {
     this.ships = [];
     this.generateShips();
     this.length = this.board.length;
+    this.randomizeShipPlacement();
   }
 
   generateShips() {

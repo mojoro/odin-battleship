@@ -6,7 +6,6 @@ class Player {
     this.type = playerType;
     this.name = name;
     this.gameboard = new Gameboard();
-    this.gameboard.placeShip(new Ship(4), "up", [0, 0]);
   }
 
   receiveComputerMove() {
