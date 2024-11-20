@@ -11,19 +11,41 @@
 
 <body>
   <div id="page-wrapper">
-    <header>Battleship</header>
-    <div id="game-area">
-      <div class="board-wrapper" id="player1">
-        <div class="player-name">Player 1</div>
-        <div class="board awaiting-turn">
-        </div>
+    <div class="intro-screen">
+      <div class="player-options">
+        <label for="name1">Player One Name</label>
+        <input type="text" name="name1" id="name1">
+        <label for="player-type1">Select Player One Type</label>
+        <select name="player-type1" id="player-type1">
+          <option value="human">Human</option>
+          <option value="computer">Computer</option>
+        </select>
       </div>
-      <div class="board-wrapper active-target" id="player2">
-        <div class="player-name">Player 2</div>
-        <div class="board">
-        </div>
+      <div class="player-options">
+        <label for="name2">Player Two Name</label>
+        <input type="text" name="name2" id="name2">
+        <label for="player-type2">Select Player One Type</label>
+        <select name="player-type2" id="player-type2">
+          <option value="human">Human</option>
+          <option value="computer">Computer</option>
+        </select>
       </div>
+      <button>Choose your layout!</button>
     </div>
+    <main class="game-screen" id="inactive">
+      <header>Battleship</header>
+      <div id="game-area">
+        <div class="board-wrapper" id="player1">
+          <div class="player-name">Player 1</div>
+          <div class="board awaiting-turn">
+          </div>
+        </div>
+        <div class="board-wrapper active-target" id="player2">
+          <div class="player-name">Player 2</div>
+          <div class="board"></div>
+        </div>
+      </div>
+    </main>
     <div class="win-screen" id="inactive">
       <div class="win-message-wrapper">
         <h1>John Wins!</h1>
