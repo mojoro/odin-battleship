@@ -1,3 +1,4 @@
+import { Ship } from "./ship.js";
 class Node {
   constructor(ship = null, status = "untouched") {
     (this.ship = ship), (this.status = status);
@@ -28,32 +29,65 @@ class Gameboard {
       this.board.push(column);
     }
     this.ships = [];
+    this.generateShips();
     this.length = this.board.length;
   }
 
+  generateShips() {
+    const shipSizes = [5, 4, 3, 3, 2];
+    for (const size of shipSizes) {
+      const ship = new Ship(size);
+      this.ships.push(ship);
+    }
+    return this.ships;
+  }
+
+  randomizeShipPlacement() {
+    const directions = ["up", "down", "left", "right"];
+    for (const ship of this.ships) {
+      let placed = false;
+      while (!placed) {
+        placed = this.randomizeShipHelper(ship, directions);
+      }
+    }
+  }
+
+  randomizeShipHelper(ship, directions) {
+    let firstCoord = Math.floor(Math.random() * this.length);
+    let secondCoord = Math.floor(Math.random() * this.length);
+    let directionChoice = Math.floor(Math.random() * 4);
+    let direction = directions[directionChoice];
+    let startingCoords = [firstCoord, secondCoord];
+    return this.moveShip(ship, direction, startingCoords);
+  }
+
   placeShip(ship, direction, startingCoords) {
-    if (!isValidCoord(startingCoords))
-      throw new Error("Invalid starting coordinates!");
-    if (checkOccupied(this, startingCoords))
-      throw new Error(`${startingCoords} is occupied!`);
+    if (!this.moveShip(ship, direction, startingCoords))
+      throw new Error(
+        "Placement failed due to occupied starting point, invalid coordinate, or collision"
+      );
+    this.ships.push(ship);
+    return this;
+  }
+
+  moveShip(ship, direction, startingCoords) {
+    if (ship.coords.length > 0) this.removeShipFromBoard(ship);
+    if (!isValidCoord(startingCoords)) return false;
+    if (checkOccupied(this, startingCoords)) return false;
 
     let coordsArray = [startingCoords];
     for (let i = 0; i < ship.size - 1; i++) {
       let nextCoords = getAdjacentCoords(direction, coordsArray[i]);
-      if (!isValidCoord(nextCoords))
-        throw new Error(
-          "Invalid coordinates! Change starting point or direction"
-        );
-      if (checkOccupied(this, nextCoords))
-        throw new Error(`${startingCoords} is occupied!`);
+      if (!isValidCoord(nextCoords)) return false;
+      if (checkOccupied(this, nextCoords)) return false;
       coordsArray.push(nextCoords);
     }
 
     for (const coord of coordsArray) {
+      ship.addCoords(coord);
       this.setCoords(coord, ship);
     }
-    this.ships.push(ship);
-    return this;
+    return true;
   }
 
   setCoords(coords, value) {
@@ -61,6 +95,15 @@ class Gameboard {
     if (typeof value == "string")
       this.board[coords[0]][coords[1]].status = value;
     return this;
+  }
+
+  removeShipFromBoard(ship) {
+    for (let i = 0; i < ship.coords.length; i++) {
+      let x = ship.coords[i][0];
+      let y = ship.coords[i][1];
+      this.board[x][y].ship = null;
+    }
+    ship.clearCoords();
   }
 
   receiveAttack(coords) {

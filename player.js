@@ -14,8 +14,11 @@ class Player {
       Math.floor(Math.random() * 100) % (this.gameboard.length - 1);
     const secondCoord =
       Math.floor(Math.random() * 100) % (this.gameboard.length - 1);
-    this.gameboard.receiveAttack([firstCoord, secondCoord]);
-    return [firstCoord, secondCoord];
+    if (this.gameboard.board[firstCoord][secondCoord].status == "untouched") {
+      this.gameboard.receiveAttack([firstCoord, secondCoord]);
+      return [firstCoord, secondCoord];
+    }
+    return this.receiveComputerMove();
   }
 }
 

@@ -18,6 +18,13 @@ test("Gameboard is 10x10", () => {
   expect(testBoard.board.length && testBoard.board[0].length).toBe(10);
 });
 
+test("Gameboard can generate ships", () => {
+  const testBoard = new Gameboard();
+  testBoard.generateShips();
+  expect(Array.isArray(testBoard.ships)).toBeTruthy();
+  expect(testBoard.ships.length).toBeGreaterThan(0);
+});
+
 test("Gameboard can place ships", () => {
   const testShip = new Ship(5);
   const testBoard = new Gameboard();
@@ -31,6 +38,20 @@ test("Gameboard can place ships", () => {
   ).toBe(testShip);
 });
 
+test("Gameboard can move ships", () => {
+  const testShip = new Ship(5);
+  const testBoard = new Gameboard();
+  testBoard.placeShip(testShip, "up", [4, 4]);
+  testBoard.moveShip(testShip, "down", [4, 4]);
+  expect(
+    testBoard.board[4][4].ship &&
+      testBoard.board[4][3].ship &&
+      testBoard.board[4][2].ship &&
+      testBoard.board[4][1].ship &&
+      testBoard.board[4][0].ship
+  ).toBe(testShip);
+});
+
 test("Gameboard won't place ships on top of each other", () => {
   const testShip1 = new Ship(5);
   const testBoard = new Gameboard();
@@ -38,6 +59,22 @@ test("Gameboard won't place ships on top of each other", () => {
 
   testBoard.placeShip(testShip1, "up", [4, 4]);
   expect(() => testBoard.placeShip(testShip2, "up", [4, 4])).toThrow();
+});
+
+test("Gameboard can distribute ships randomly on the board", () => {
+  const testBoard = new Gameboard();
+  testBoard.randomizeShipPlacement();
+  let hasCoords = true;
+  let occupiedCoords = [];
+  for (const ship of testBoard.ships) {
+    if (ship.size != ship.coords.length) hasCoords = false;
+    for (const coord of ship.coords) {
+      if (occupiedCoords.some((element) => `${element}` == `${coord}`))
+        hasCoords = false;
+      else occupiedCoords.push(coord);
+    }
+  }
+  expect(hasCoords).toBeTruthy();
 });
 
 test("Gameboard records hits", () => {
@@ -60,6 +97,7 @@ test("Gameboard detects when all ships are sunk", () => {
   const testShip = new Ship(3);
   const testBoard = new Gameboard();
   const testShip2 = new Ship(5);
+  testBoard.ships = [];
   testBoard.placeShip(testShip2, "up", [4, 4]);
   testBoard.placeShip(testShip, "down", [4, 3]);
   testBoard.receiveAttack([4, 3]).receiveAttack([4, 2]).receiveAttack([4, 1]);
@@ -102,4 +140,12 @@ test("Player gameboard updates after receiveComputerMove()", () => {
   const sentCoords = player.receiveComputerMove();
   const [x, y] = sentCoords;
   expect(player.gameboard.board[x][y].status).not.toBe("untouched");
+});
+
+test("Player receiveComputerMove() does not double sent moves", () => {
+  const player = new Player("computer");
+  const sentCoords = player.receiveComputerMove();
+  const secondSentCoords = player.receiveComputerMove();
+
+  expect(`${secondSentCoords}`).not.toBe(`${sentCoords}`);
 });
