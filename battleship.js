@@ -9,13 +9,32 @@ const playerTwoElements = {};
 playerTwoElements.wrapper = document.getElementById("player2");
 playerTwoElements.name = playerTwoElements.wrapper.firstElementChild;
 playerTwoElements.board = playerTwoElements.name.nextElementSibling;
+const introScreenElements = {};
+introScreenElements.page = document.getElementById("intro-screen");
 
-const render = new Renderer(playerOneElements, playerTwoElements);
+const render = new Renderer(
+  playerOneElements,
+  playerTwoElements,
+  introScreenElements
+);
 
-function beginGame() {
+render.introScreen();
+
+introScreenElements.button.addEventListener("click", () => {
+  const name1 = introScreenElements.input1.value;
+  const name2 = introScreenElements.input2.value;
+  const type1 = introScreenElements.select1.value;
+  const type2 = introScreenElements.select2.value;
+
+  const playerOne = new Player(type1, name1);
+  const playerTwo = new Player(type2, name2);
+
+  render.clearIntro();
+  render.shipSelection(playerOne);
+});
+
+function beginGame(playerOne, playerTwo) {
   document.querySelector(".win-screen").id = "inactive";
-  const playerOne = new Player("human", "John");
-  const playerTwo = new Player("computer", "Computer");
   render.setText(playerOneElements.name, playerOne.name);
   render.setText(playerTwoElements.name, playerTwo.name);
 
@@ -42,7 +61,7 @@ function beginGame() {
   );
 }
 
-beginGame();
+//beginGame();
 document
   .querySelector(".win-message-wrapper button")
   .addEventListener("click", beginGame);

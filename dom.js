@@ -1,12 +1,158 @@
 class Renderer {
-  constructor(playerOneElements, playerTwoElements) {
+  constructor(playerOneElements, playerTwoElements, introScreenElements) {
     this.playerOneElements = playerOneElements;
     this.playerTwoElements = playerTwoElements;
+    this.introScreenElements = introScreenElements;
     this.winScreen = document.querySelector(".win-screen");
   }
 
-  setText(element, name) {
-    element.textContent = name;
+  introScreen() {
+    const introScreen = this.introScreenElements.page;
+    const logoText = document.createElement("h1");
+    logoText.id = "logo-text";
+    logoText.textContent = "BATTLESHIP";
+    introScreen.appendChild(logoText);
+
+    const mainLogo = document.createElement("img");
+    mainLogo.id = "main-logo";
+    mainLogo.src = "media/main-logo.svg";
+    mainLogo.alt = "Vector image of a battleship";
+    introScreen.appendChild(mainLogo);
+
+    const introGrid = document.createElement("div");
+    introGrid.className = "intro-grid";
+
+    const playerOptions1 = document.createElement("div");
+    playerOptions1.className = "player-options";
+
+    const inputWrapper1 = document.createElement("div");
+    inputWrapper1.className = "input-wrapper";
+
+    const label1 = document.createElement("label");
+    label1.htmlFor = "name1";
+    label1.textContent = "Player One Name";
+    inputWrapper1.appendChild(label1);
+
+    const input1 = document.createElement("input");
+    this.introScreenElements.input1 = input1;
+    input1.type = "text";
+    input1.name = "name1";
+    input1.id = "name1";
+    inputWrapper1.appendChild(input1);
+
+    playerOptions1.appendChild(inputWrapper1);
+
+    const inputWrapper2 = document.createElement("div");
+    inputWrapper2.className = "input-wrapper";
+
+    const label2 = document.createElement("label");
+    label2.htmlFor = "player-type1";
+    label2.textContent = "Select Player One Type";
+    inputWrapper2.appendChild(label2);
+
+    const select1 = document.createElement("select");
+    this.introScreenElements.select1 = select1;
+    select1.name = "player-type1";
+    select1.id = "player-type1";
+
+    const option1 = document.createElement("option");
+    option1.value = "human";
+    option1.textContent = "Human";
+    select1.appendChild(option1);
+
+    const option2 = document.createElement("option");
+    option2.value = "computer";
+    option2.textContent = "Computer";
+    select1.appendChild(option2);
+
+    inputWrapper2.appendChild(select1);
+    playerOptions1.appendChild(inputWrapper2);
+    introGrid.appendChild(playerOptions1);
+
+    const playerOptions2 = document.createElement("div");
+    playerOptions2.className = "player-options";
+
+    const inputWrapper3 = document.createElement("div");
+    inputWrapper3.className = "input-wrapper";
+
+    const label3 = document.createElement("label");
+    label3.htmlFor = "name2";
+    label3.textContent = "Player Two Name";
+    inputWrapper3.appendChild(label3);
+
+    const input2 = document.createElement("input");
+    this.introScreenElements.input2 = input2;
+    input2.type = "text";
+    input2.name = "name2";
+    input2.id = "name2";
+    inputWrapper3.appendChild(input2);
+
+    playerOptions2.appendChild(inputWrapper3);
+
+    const inputWrapper4 = document.createElement("div");
+    inputWrapper4.className = "input-wrapper";
+
+    const label4 = document.createElement("label");
+    label4.htmlFor = "player-type2";
+    label4.textContent = "Select Player Two Type";
+    inputWrapper4.appendChild(label4);
+
+    const select2 = document.createElement("select");
+    this.introScreenElements.select2 = select2;
+    select2.name = "player-type2";
+    select2.id = "player-type2";
+
+    const option3 = document.createElement("option");
+    option3.value = "human";
+    option3.textContent = "Human";
+    select2.appendChild(option3);
+
+    const option4 = document.createElement("option");
+    option4.value = "computer";
+    option4.textContent = "Computer";
+    select2.appendChild(option4);
+
+    inputWrapper4.appendChild(select2);
+    playerOptions2.appendChild(inputWrapper4);
+    introGrid.appendChild(playerOptions2);
+
+    const button = document.createElement("button");
+    this.introScreenElements.button = button;
+    button.textContent = "Choose your layout!";
+    introGrid.appendChild(button);
+
+    introScreen.appendChild(introGrid);
+  }
+
+  clearIntro() {
+    this.introScreenElements.page.innerHTML = "";
+  }
+
+  shipSelection(player) {
+    const boardWrapper = document.createElement("div");
+    boardWrapper.classList = "board-wrapper";
+    boardWrapper.id = "player1-preview";
+    const playerName = document.createElement("div");
+    playerName.classList = "player-name";
+    playerName.textContent = player.name;
+    boardWrapper.appendChild(playerName);
+    const boardElement = document.createElement("div");
+    boardElement.classList = "board";
+    boardWrapper.appendChild(boardElement);
+
+    this.introScreenElements.page.appendChild(boardWrapper);
+
+    for (let x = 0; x < player.gameboard.board.length; x++) {
+      for (let y = 0; y < player.gameboard.board[x].length; y++) {
+        const cell = document.createElement("div");
+        boardElement.appendChild(cell);
+      }
+    }
+    this.renderBoard(boardElement, player.gameboard.board);
+  }
+
+  setText(element, content) {
+    element.textContent = content;
   }
 
   resetBoards() {
