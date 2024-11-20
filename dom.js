@@ -1,9 +1,7 @@
 class Renderer {
-  constructor(playerOneElements, playerTwoElements, playerOne, playerTwo) {
+  constructor(playerOneElements, playerTwoElements) {
     this.playerOneElements = playerOneElements;
     this.playerTwoElements = playerTwoElements;
-    this.playerOne = playerOne;
-    this.playerTwo = playerTwo;
     this.winScreen = document.querySelector(".win-screen");
   }
 
@@ -11,8 +9,18 @@ class Renderer {
     element.textContent = name;
   }
 
+  resetBoards() {
+    this.playerOneElements.board.remove();
+    this.playerOneElements.board = document.createElement("div");
+    this.playerOneElements.board.classList.add("board", "awaiting-turn");
+    this.playerTwoElements.board.remove();
+    this.playerTwoElements.board = document.createElement("div");
+    this.playerTwoElements.board.classList.add("board");
+    this.playerOneElements.wrapper.appendChild(this.playerOneElements.board);
+    this.playerTwoElements.wrapper.appendChild(this.playerTwoElements.board);
+  }
+
   initialRender(boardElement, player) {
-    boardElement.innerHTML = "";
     for (let x = 0; x < player.gameboard.board.length; x++) {
       for (let y = 0; y < player.gameboard.board[x].length; y++) {
         const cell = document.createElement("div");
@@ -21,7 +29,6 @@ class Renderer {
             player.gameboard.receiveAttack([x, y]);
             this.switchTurn();
             this.renderBoard(boardElement, player.gameboard.board);
-            this.evaluateWin(player);
           }
         });
         boardElement.appendChild(cell);
@@ -46,28 +53,9 @@ class Renderer {
     this.playerTwoElements.board.classList.toggle("awaiting-turn");
   }
 
-  // refactor this it is so ugly
-  evaluateWin() {
-    if (
-      !this.playerOne.gameboard.allSunk() &&
-      !this.playerTwo.gameboard.allSunk()
-    )
-      return;
-    if (this.playerOne.gameboard.allSunk()) {
-      this.winScreen.firstElementChild.firstElementChild.textContent = `${this.playerTwo.name} wins!`;
-      this.winScreen.firstElementChild.lastElementChild.addEventListener(
-        "click",
-        () => {}
-      );
-      this.winScreen.id = "";
-    } else if (this.playerTwo.gameboard.allSunk()) {
-      this.winScreen.firstElementChild.firstElementChild.textContent = `${this.playerOne.name} wins!`;
-      this.winScreen.firstElementChild.lastElementChild.addEventListener(
-        "click",
-        () => {}
-      );
-      this.winScreen.id = "";
-    }
+  displayWin(winnerName) {
+    this.winScreen.firstElementChild.firstElementChild.textContent = `${winnerName} wins!`;
+    this.winScreen.id = "";
   }
 }
 

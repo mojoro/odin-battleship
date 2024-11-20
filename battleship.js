@@ -10,27 +10,43 @@ playerTwoElements.wrapper = document.getElementById("player2");
 playerTwoElements.name = playerTwoElements.wrapper.firstElementChild;
 playerTwoElements.board = playerTwoElements.name.nextElementSibling;
 
+const render = new Renderer(playerOneElements, playerTwoElements);
+
 function beginGame() {
   document.querySelector(".win-screen").id = "inactive";
   const playerOne = new Player("human", "John");
   const playerTwo = new Player("computer", "Computer");
-  const render = new Renderer(
-    playerOneElements,
-    playerTwoElements,
-    playerOne,
-    playerTwo
-  );
   render.setText(playerOneElements.name, playerOne.name);
   render.setText(playerTwoElements.name, playerTwo.name);
 
+  render.resetBoards();
   render.initialRender(playerOneElements.board, playerOne);
   render.initialRender(playerTwoElements.board, playerTwo);
   render.renderBoard(playerOneElements.board, playerOne.gameboard.board);
   render.renderBoard(playerTwoElements.board, playerTwo.gameboard.board);
+
+  const winCallback = evaluateWin(playerOne, playerTwo);
+  const boardElements = [playerOneElements.board, playerTwoElements.board];
+  boardElements.forEach((element) =>
+    element.addEventListener("click", winCallback)
+  );
 }
-// what if we just have one event listener on the whole thing that evaluates the win condition, then calls the render with the finished logic already done.
-// KEEP GAME LOGIC OUT OF RENDER CLASS
+
 beginGame();
 document
   .querySelector(".win-message-wrapper button")
   .addEventListener("click", beginGame);
+
+function evaluateWin(playerOne, playerTwo) {
+  let winner = "";
+  return function () {
+    if (!playerOne.gameboard.allSunk() && !playerTwo.gameboard.allSunk())
+      return;
+    if (playerOne.gameboard.allSunk()) {
+      winner = playerTwo.name;
+    } else if (playerTwo.gameboard.allSunk()) {
+      winner = playerOne.name;
+    }
+    render.displayWin(winner);
+  };
+}
