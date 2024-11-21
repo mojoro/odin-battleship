@@ -154,14 +154,16 @@ class Renderer {
       for (let y = 0; y < player.gameboard.board[x].length; y++) {
         const cell = document.createElement("div");
         cell.id = `${x}${y}`;
-        if (player.gameboard.board[x][y].ship) {
-          cell.addEventListener("mouseover", () => {
+
+        cell.addEventListener("mouseover", () => {
+          if (player.gameboard.board[x][y].ship)
             highlightShip(player.gameboard.board[x][y].ship);
-          });
-          cell.addEventListener("mouseleave", () => {
+        });
+        cell.addEventListener("mouseleave", () => {
+          if (player.gameboard.board[x][y].ship)
             this.renderEditableBoard(boardElement, player.gameboard.board);
-          });
-        }
+        });
+
         boardElement.appendChild(cell);
       }
     }

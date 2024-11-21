@@ -160,12 +160,12 @@ header {
   height: 100%;
   width: 100%;
   border: dotted 1px var(--secondary-text-color);
-  cursor: pointer;
 }
 
 .cell:hover {
   background-color: var(--secondary-background-color);
   border: solid;
+  cursor: pointer;
 }
 
 .cell.hit {
@@ -184,35 +184,41 @@ cursor: default;
 }
 
 #intro-screen .cell.top-vert{
+  border: none;
   border-top: 2px solid var(--primary-text-color);
   border-left: 2px solid var(--primary-text-color);
   border-right: 2px solid var(--primary-text-color);
 }
 
 #intro-screen .cell.bottom-vert{
+  border: none;
   border-bottom: 2px solid var(--primary-text-color);
   border-left: 2px solid var(--primary-text-color);
   border-right: 2px solid var(--primary-text-color);
 }
 
 #intro-screen .cell.inner-vert {
+  border: none;
   border-left: 2px solid var(--primary-text-color);
   border-right: 2px solid var(--primary-text-color);
 }
 
 #intro-screen .cell.left-hori{
+  border: none;
   border-top: 2px solid var(--primary-text-color);
   border-bottom: 2px solid var(--primary-text-color);
   border-left: 2px solid var(--primary-text-color);
 }
 
 #intro-screen .cell.right-hori{
+  border: none;
   border-top: 2px solid var(--primary-text-color);
   border-bottom: 2px solid var(--primary-text-color);
   border-right: 2px solid var(--primary-text-color);
 }
 
 #intro-screen .cell.inner-hori {
+  border: none;
   border-top: 2px solid var(--primary-text-color);
   border-bottom: 2px solid var(--primary-text-color);
 }
