@@ -140,15 +140,32 @@ class Renderer {
     boardElement.classList = "board";
     boardWrapper.appendChild(boardElement);
 
+    const randomizePlacementButton = document.createElement("button");
+    randomizePlacementButton.textContent = "Randomize Placement";
+    randomizePlacementButton.addEventListener("click", () => {
+      player.gameboard.randomizeShipPlacement();
+      this.renderEditableBoard(boardElement, player.gameboard.board);
+    });
+
     this.introScreenElements.page.appendChild(boardWrapper);
+    this.introScreenElements.page.appendChild(randomizePlacementButton);
 
     for (let x = 0; x < player.gameboard.board.length; x++) {
       for (let y = 0; y < player.gameboard.board[x].length; y++) {
         const cell = document.createElement("div");
+        cell.id = `${x}${y}`;
+        if (player.gameboard.board[x][y].ship) {
+          cell.addEventListener("mouseover", () => {
+            highlightShip(player.gameboard.board[x][y].ship);
+          });
+          cell.addEventListener("mouseleave", () => {
+            this.renderEditableBoard(boardElement, player.gameboard.board);
+          });
+        }
         boardElement.appendChild(cell);
       }
     }
-    this.renderBoard(boardElement, player.gameboard.board);
+    this.renderEditableBoard(boardElement, player.gameboard.board);
   }
 
   setText(element, content) {
@@ -209,6 +226,17 @@ class Renderer {
     }
   }
 
+  renderEditableBoard(boardElement, board) {
+    let currentCell = boardElement.firstElementChild;
+    for (let x = 0; x < board.length; x++) {
+      for (let y = 0; y < board[x].length; y++) {
+        if (board[x][y].ship) currentCell.classList = "cell occupied";
+        else currentCell.classList = "cell";
+        currentCell = currentCell.nextElementSibling;
+      }
+    }
+  }
+
   switchTurn() {
     this.playerOneElements.wrapper.classList.toggle("active-target");
     this.playerTwoElements.wrapper.classList.toggle("active-target");
@@ -230,6 +258,45 @@ function returnCellClassList(node) {
       return "cell hit";
     case "miss":
       return "cell miss";
+  }
+}
+
+function highlightShip(ship) {
+  const coords = ship.coords;
+  for (let i = 0; i < coords.length; i++) {
+    let x = coords[i][0];
+    let y = coords[i][1];
+    const currentCell = document.getElementById(`${x}${y}`);
+    switch (ship.direction) {
+      case "left":
+        if (i == 0) {
+          currentCell.classList = "cell occupied bottom-vert";
+        } else if (i == coords.length - 1)
+          currentCell.classList = "cell occupied top-vert";
+        else currentCell.classList = "cell occupied inner-vert";
+        break;
+      case "right":
+        if (i == 0) {
+          currentCell.classList = "cell occupied top-vert";
+        } else if (i == coords.length - 1)
+          currentCell.classList = "cell occupied bottom-vert";
+        else currentCell.classList = "cell occupied inner-vert";
+        break;
+      case "up":
+        if (i == 0) {
+          currentCell.classList = "cell occupied left-hori";
+        } else if (i == coords.length - 1)
+          currentCell.classList = "cell occupied right-hori";
+        else currentCell.classList = "cell occupied inner-hori";
+        break;
+      case "down":
+        if (i == 0) {
+          currentCell.classList = "cell occupied right-hori";
+        } else if (i == coords.length - 1)
+          currentCell.classList = "cell occupied left-hori";
+        else currentCell.classList = "cell occupied inner-hori";
+        break;
+    }
   }
 }
 

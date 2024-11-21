@@ -86,6 +86,7 @@ class Gameboard {
 
     for (const coord of coordsArray) {
       ship.addCoords(coord);
+      ship.addDirection(direction);
       this.setCoords(coord, ship);
     }
     return true;
@@ -105,6 +106,13 @@ class Gameboard {
       this.board[x][y].ship = null;
     }
     ship.clearCoords();
+    ship.clearDirection();
+  }
+
+  removeShipsFromBoard() {
+    for (const ship of this.ships) {
+      this.removeShipFromBoard(ship);
+    }
   }
 
   receiveAttack(coords) {

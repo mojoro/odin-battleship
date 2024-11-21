@@ -28,6 +28,7 @@ test("Gameboard can generate ships", () => {
 test("Gameboard can place ships", () => {
   const testShip = new Ship(5);
   const testBoard = new Gameboard();
+  testBoard.removeShipsFromBoard();
   testBoard.placeShip(testShip, "up", [4, 4]);
   expect(
     testBoard.board[4][4].ship &&
@@ -41,6 +42,7 @@ test("Gameboard can place ships", () => {
 test("Gameboard can move ships", () => {
   const testShip = new Ship(5);
   const testBoard = new Gameboard();
+  testBoard.removeShipsFromBoard();
   testBoard.placeShip(testShip, "up", [4, 4]);
   testBoard.moveShip(testShip, "down", [4, 4]);
   expect(
@@ -56,6 +58,7 @@ test("Gameboard won't place ships on top of each other", () => {
   const testShip1 = new Ship(5);
   const testBoard = new Gameboard();
   const testShip2 = new Ship(3);
+  testBoard.removeShipsFromBoard();
 
   testBoard.placeShip(testShip1, "up", [4, 4]);
   expect(() => testBoard.placeShip(testShip2, "up", [4, 4])).toThrow();
@@ -80,6 +83,7 @@ test("Gameboard can distribute ships randomly on the board", () => {
 test("Gameboard records hits", () => {
   const testShip = new Ship(3);
   const testBoard = new Gameboard();
+  testBoard.removeShipsFromBoard();
   testBoard.placeShip(testShip, "down", [4, 4]);
   testBoard.receiveAttack([4, 4]);
   expect(testBoard.board[4][4].status).toBe("hit");
@@ -88,6 +92,7 @@ test("Gameboard records hits", () => {
 test("Gameboard records misses", () => {
   const testShip = new Ship(3);
   const testBoard = new Gameboard();
+  testBoard.removeShipsFromBoard();
   testBoard.placeShip(testShip, "down", [4, 4]);
   testBoard.receiveAttack([4, 5]);
   expect(testBoard.board[4][5].status).toBe("miss");
@@ -97,6 +102,7 @@ test("Gameboard detects when all ships are sunk", () => {
   const testShip = new Ship(3);
   const testBoard = new Gameboard();
   const testShip2 = new Ship(5);
+  testBoard.removeShipsFromBoard();
   testBoard.ships = [];
   testBoard.placeShip(testShip2, "up", [4, 4]);
   testBoard.placeShip(testShip, "down", [4, 3]);
@@ -108,6 +114,14 @@ test("Gameboard detects when all ships are sunk", () => {
     .receiveAttack([4, 7])
     .receiveAttack([4, 8]);
   expect(testBoard.allSunk()).toBeTruthy();
+});
+
+test("Gameboard passes direction to ship appropriately", () => {
+  const testBoard = new Gameboard();
+  const testShip = new Ship();
+  testBoard.removeShipsFromBoard();
+  testBoard.placeShip(testShip, "up", [4, 4]);
+  expect(testShip.direction).toBe("up");
 });
 
 test("Player has two types", () => {
