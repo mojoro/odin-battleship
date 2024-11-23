@@ -27,14 +27,10 @@ class Renderer {
   introScreen() {
     const introScreen = this.introScreenElements.page;
     introScreen.style = "";
-    const logoText = document.createElement("h1");
-    logoText.id = "logo-text";
-    logoText.textContent = "BATTLESHIP";
-    introScreen.appendChild(logoText);
 
     const mainLogo = document.createElement("img");
     mainLogo.id = "main-logo";
-    mainLogo.src = "media/main-logo.svg";
+    mainLogo.src = "media/main-logo.png";
     mainLogo.alt = "Vector image of a battleship";
     introScreen.appendChild(mainLogo);
 
