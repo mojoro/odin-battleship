@@ -136,6 +136,7 @@ class Renderer {
 
     const button = document.createElement("button");
     this.introScreenElements.button = button;
+    button.classList = "text-button";
     button.textContent = "Choose your layout!";
     introGrid.appendChild(button);
 
@@ -160,6 +161,7 @@ class Renderer {
 
     const randomizePlacementButton = document.createElement("button");
     randomizePlacementButton.textContent = "Randomize Placement";
+    randomizePlacementButton.classList = "text-button";
     randomizePlacementButton.addEventListener("click", () => {
       player.gameboard.randomizeShipPlacement();
       this.clearIntro();
@@ -201,7 +203,16 @@ class Renderer {
           player.gameboard.moveShip(ship, ship.direction, targetCoords);
         });
 
-        cell.addEventListener("dragend", () => {
+        cell.addEventListener("dragend", (event) => {
+          if (player.gameboard.movingShip.coords.length == 0) {
+            const dragCellID = event.target.id;
+            const returnCoords = [Number(dragCellID[0]), Number(dragCellID[1])];
+            player.gameboard.moveShip(
+              player.gameboard.movingShip,
+              player.gameboard.movingShip.previousDirection,
+              returnCoords
+            );
+          }
           this.clearIntro();
           this.shipSelection(player);
           this.renderEditableBoard(boardElement, player.gameboard.board);
@@ -211,11 +222,26 @@ class Renderer {
           if (player.gameboard.board[x][y].ship)
             this.highlightShip(player.gameboard.board[x][y].ship);
         });
+
         cell.addEventListener("mouseleave", () => {
           if (player.gameboard.board[x][y].ship)
             this.renderEditableBoard(boardElement, player.gameboard.board);
         });
 
+        if (player.gameboard.board[x][y].ship) {
+          cell.addEventListener("click", (e) => {
+            player.gameboard.rotatingShip = player.gameboard.board[x][y].ship;
+            const rotationButton = document.createElement("button");
+            rotationButton.id = "rotation-button";
+            rotationButton.addEventListener("click", () => {
+              player.gameboard.rotateShip(player.gameboard.rotatingShip);
+              this.clearIntro();
+              this.shipSelection(player);
+              this.renderEditableBoard(boardElement, player.gameboard.board);
+            });
+            cell.appendChild(rotationButton);
+          });
+        }
         boardElement.appendChild(cell);
       }
     }

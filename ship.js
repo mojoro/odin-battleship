@@ -5,6 +5,8 @@ class Ship {
     this.sunk = false;
     this.coords = [];
     this.direction = null;
+    this.previousDirection = null;
+    this.previousCoords = [];
   }
 
   hit() {
@@ -20,13 +22,16 @@ class Ship {
 
   addCoords(coords) {
     this.coords.push(coords);
+    this.previousCoords = this.coords;
   }
 
   clearCoords() {
     this.coords = [];
   }
+
   addDirection(direction) {
     this.direction = direction;
+    this.previousDirection = direction;
   }
 
   clearDirection() {

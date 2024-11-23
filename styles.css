@@ -83,7 +83,7 @@ option {
   color: black;
 }
 
-#intro-screen button {
+#intro-screen .text-button {
   padding: .7rem;
   font-size: 1.2rem;
   background-color: var(--secondary-background-color);
@@ -157,6 +157,7 @@ header {
 }
 
 .cell {
+  position: relative;
   height: 100%;
   width: 100%;
   border: dotted 1px var(--secondary-text-color);
@@ -221,6 +222,23 @@ cursor: default;
   border: none;
   border-top: 2px solid var(--primary-text-color);
   border-bottom: 2px solid var(--primary-text-color);
+}
+
+button#rotation-button {
+  position: absolute;
+  background: var(--secondary-text-color);
+  background-image: url('media/rotate-option-svgrepo-com.svg');
+  background-size: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-color);
+  top: -30px;
+  left: 30px;
+  cursor: pointer;
+  z-index: 10;
 }
 
 .win-screen {

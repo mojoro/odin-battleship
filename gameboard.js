@@ -33,6 +33,7 @@ class Gameboard {
     this.length = this.board.length;
     this.randomizeShipPlacement();
     this.movingShip = null;
+    this.rotatingShip = null;
   }
 
   generateShips() {
@@ -76,6 +77,7 @@ class Gameboard {
     if (ship.coords.length > 0) this.removeShipFromBoard(ship);
     if (!isValidCoord(startingCoords)) return false;
     if (checkOccupied(this, startingCoords)) return false;
+    if (direction == null) direction = ship.previousDirection;
 
     let coordsArray = [startingCoords];
     for (let i = 0; i < ship.size - 1; i++) {
@@ -87,10 +89,24 @@ class Gameboard {
 
     for (const coord of coordsArray) {
       ship.addCoords(coord);
-      ship.addDirection(direction);
       this.setCoords(coord, ship);
     }
+    ship.addDirection(direction);
     return true;
+  }
+
+  rotateShip(ship) {
+    let direction;
+    if (ship.direction) direction = ship.direction;
+    else direction = ship.previousDirection;
+    if (direction == "up") direction = "right";
+    else if (direction == "right") direction = "down";
+    else if (direction == "down") direction = "left";
+    else if (direction == "left") direction = "up";
+
+    if (!this.moveShip(ship, direction, ship.coords[0])) {
+      this.moveShip(ship, ship.previousDirection, ship.previousCoords[0]);
+    }
   }
 
   setCoords(coords, value) {
