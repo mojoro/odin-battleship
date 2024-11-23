@@ -20,6 +20,39 @@ const render = new Renderer(
 
 render.introScreen();
 
+function beginGame(playerOne, playerTwo) {
+  return function () {
+    document.querySelector(".win-screen").id = "inactive";
+    document.getElementById("intro-screen").innerHTML = "";
+    document.getElementById("intro-screen").id = "intro-screen inactive";
+    document.querySelector(".game-screen").id = "";
+    render.setText(playerOneElements.name, playerOne.name);
+    render.setText(playerTwoElements.name, playerTwo.name);
+
+    render.resetBoards();
+    render.initialRender(
+      playerOneElements.board,
+      playerTwoElements.board,
+      playerOne,
+      playerTwo
+    );
+    render.initialRender(
+      playerTwoElements.board,
+      playerOneElements.board,
+      playerTwo,
+      playerOne
+    );
+    render.renderBoard(playerOneElements.board, playerOne.gameboard.board);
+    render.renderBoard(playerTwoElements.board, playerTwo.gameboard.board);
+
+    const winCallback = evaluateWin(playerOne, playerTwo);
+    const boardElements = [playerOneElements.board, playerTwoElements.board];
+    boardElements.forEach((element) =>
+      element.addEventListener("click", winCallback)
+    );
+  };
+}
+
 introScreenElements.button.addEventListener("click", () => {
   const name1 = introScreenElements.input1.value;
   const name2 = introScreenElements.input2.value;
@@ -28,38 +61,11 @@ introScreenElements.button.addEventListener("click", () => {
 
   const playerOne = new Player(type1, name1);
   const playerTwo = new Player(type2, name2);
+  const gameStart = beginGame(playerOne, playerTwo);
 
   render.clearIntro();
-  render.shipSelection(playerOne);
+  render.shipSelection(playerOne, playerTwo, null, gameStart);
 });
-
-function beginGame(playerOne, playerTwo) {
-  document.querySelector(".win-screen").id = "inactive";
-  render.setText(playerOneElements.name, playerOne.name);
-  render.setText(playerTwoElements.name, playerTwo.name);
-
-  render.resetBoards();
-  render.initialRender(
-    playerOneElements.board,
-    playerTwoElements.board,
-    playerOne,
-    playerTwo
-  );
-  render.initialRender(
-    playerTwoElements.board,
-    playerOneElements.board,
-    playerTwo,
-    playerOne
-  );
-  render.renderBoard(playerOneElements.board, playerOne.gameboard.board);
-  render.renderBoard(playerTwoElements.board, playerTwo.gameboard.board);
-
-  const winCallback = evaluateWin(playerOne, playerTwo);
-  const boardElements = [playerOneElements.board, playerTwoElements.board];
-  boardElements.forEach((element) =>
-    element.addEventListener("click", winCallback)
-  );
-}
 
 //beginGame();
 document

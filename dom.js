@@ -147,7 +147,7 @@ class Renderer {
     this.introScreenElements.page.innerHTML = "";
   }
 
-  shipSelection(player) {
+  shipSelection(player, nextPlayer = null, previousPlayer = null, beginGame) {
     const boardWrapper = document.createElement("div");
     boardWrapper.classList = "board-wrapper";
     boardWrapper.id = "player1-preview";
@@ -169,8 +169,21 @@ class Renderer {
       this.renderEditableBoard(boardElement, player.gameboard.board);
     });
 
+    const acceptPlacementButton = document.createElement("button");
+    acceptPlacementButton.classList = "text-button";
+    acceptPlacementButton.addEventListener("click", () => {
+      if (nextPlayer) {
+        this.clearIntro();
+        this.shipSelection(nextPlayer, null, player);
+        this.renderEditableBoard(boardElement, nextPlayer.gameboard.board);
+      } else {
+        beginGame();
+      }
+    });
+
     this.introScreenElements.page.appendChild(boardWrapper);
     this.introScreenElements.page.appendChild(randomizePlacementButton);
+    this.introScreenElements.page.appendChild(acceptPlacementButton);
 
     for (let x = 0; x < player.gameboard.board.length; x++) {
       for (let y = 0; y < player.gameboard.board[x].length; y++) {
