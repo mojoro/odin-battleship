@@ -4,6 +4,24 @@ class Renderer {
     this.playerTwoElements = playerTwoElements;
     this.introScreenElements = introScreenElements;
     this.winScreen = document.querySelector(".win-screen");
+    this.directionHandlers = {
+      up: {
+        highlight: highlightUp,
+        dragImage: dragImageUp,
+      },
+      down: {
+        highlight: highlightDown,
+        dragImage: dragImageDown,
+      },
+      left: {
+        highlight: highlightLeft,
+        dragImage: dragImageLeft,
+      },
+      right: {
+        highlight: highlightRight,
+        dragImage: dragImageRight,
+      },
+    };
   }
 
   introScreen() {
@@ -144,6 +162,8 @@ class Renderer {
     randomizePlacementButton.textContent = "Randomize Placement";
     randomizePlacementButton.addEventListener("click", () => {
       player.gameboard.randomizeShipPlacement();
+      this.clearIntro();
+      this.shipSelection(player);
       this.renderEditableBoard(boardElement, player.gameboard.board);
     });
 
@@ -155,9 +175,41 @@ class Renderer {
         const cell = document.createElement("div");
         cell.id = `${x}${y}`;
 
+        if (player.gameboard.board[x][y].ship) {
+          cell.setAttribute("draggable", "true");
+          cell.addEventListener("dragstart", (event) => {
+            player.gameboard.movingShip = player.gameboard.board[x][y].ship;
+            dragCell(
+              event,
+              player.gameboard,
+              player.gameboard.board[x][y].ship
+            );
+          });
+        }
+
+        let lastTargetCell = null;
+
+        cell.addEventListener("dragover", (event) => {
+          event.preventDefault();
+          lastTargetCell = event.target;
+          const ship = player.gameboard.movingShip;
+          const lastID = lastTargetCell.id;
+          const targetCoords = [Number(lastID[0]), Number(lastID[1])];
+          if (`${ship.coords[0]}` == `${targetCoords}`) return;
+          if (ship.direction == "down") ship.direction = "up";
+          if (ship.direction == "left") ship.direction = "right";
+          player.gameboard.moveShip(ship, ship.direction, targetCoords);
+        });
+
+        cell.addEventListener("dragend", () => {
+          this.clearIntro();
+          this.shipSelection(player);
+          this.renderEditableBoard(boardElement, player.gameboard.board);
+        });
+
         cell.addEventListener("mouseover", () => {
           if (player.gameboard.board[x][y].ship)
-            highlightShip(player.gameboard.board[x][y].ship);
+            this.highlightShip(player.gameboard.board[x][y].ship);
         });
         cell.addEventListener("mouseleave", () => {
           if (player.gameboard.board[x][y].ship)
@@ -250,6 +302,21 @@ class Renderer {
     this.winScreen.firstElementChild.firstElementChild.textContent = `${winnerName} wins!`;
     this.winScreen.id = "";
   }
+
+  highlightShip(ship) {
+    const coords = ship.coords;
+
+    for (let i = 0; i < coords.length; i++) {
+      let x = coords[i][0];
+      let y = coords[i][1];
+      const currentCell = document.getElementById(`${x}${y}`);
+      this.directionHandlers[ship.direction].highlight(
+        currentCell,
+        i,
+        coords.length
+      );
+    }
+  }
 }
 
 function returnCellClassList(node) {
@@ -263,43 +330,75 @@ function returnCellClassList(node) {
   }
 }
 
-function highlightShip(ship) {
-  const coords = ship.coords;
-  for (let i = 0; i < coords.length; i++) {
-    let x = coords[i][0];
-    let y = coords[i][1];
-    const currentCell = document.getElementById(`${x}${y}`);
-    switch (ship.direction) {
-      case "left":
-        if (i == 0) {
-          currentCell.classList = "cell occupied bottom-vert";
-        } else if (i == coords.length - 1)
-          currentCell.classList = "cell occupied top-vert";
-        else currentCell.classList = "cell occupied inner-vert";
-        break;
-      case "right":
-        if (i == 0) {
-          currentCell.classList = "cell occupied top-vert";
-        } else if (i == coords.length - 1)
-          currentCell.classList = "cell occupied bottom-vert";
-        else currentCell.classList = "cell occupied inner-vert";
-        break;
-      case "up":
-        if (i == 0) {
-          currentCell.classList = "cell occupied left-hori";
-        } else if (i == coords.length - 1)
-          currentCell.classList = "cell occupied right-hori";
-        else currentCell.classList = "cell occupied inner-hori";
-        break;
-      case "down":
-        if (i == 0) {
-          currentCell.classList = "cell occupied right-hori";
-        } else if (i == coords.length - 1)
-          currentCell.classList = "cell occupied left-hori";
-        else currentCell.classList = "cell occupied inner-hori";
-        break;
-    }
-  }
+function dragCell(event, gameboard, ship) {
+  const dragImage = constructDragImage(ship);
+  document.body.appendChild(dragImage);
+  event.dataTransfer.setDragImage(dragImage, 10, 10);
+  event.target.classList.add("dragging");
+  setTimeout(() => {
+    document.body.removeChild(dragImage);
+  }, 0);
 }
 
+// call moveShip with ship and direction to the starting coords derived from target cell.
+
+function highlightLeft(currentCell, index, length) {
+  if (index == 0) {
+    currentCell.classList = "cell occupied bottom-vert";
+  } else if (index == length - 1)
+    currentCell.classList = "cell occupied top-vert";
+  else currentCell.classList = "cell occupied inner-vert";
+}
+
+function highlightRight(currentCell, index, length) {
+  if (index == 0) {
+    currentCell.classList = "cell occupied top-vert";
+  } else if (index == length - 1)
+    currentCell.classList = "cell occupied bottom-vert";
+  else currentCell.classList = "cell occupied inner-vert";
+}
+
+function highlightUp(currentCell, index, length) {
+  if (index == 0) {
+    currentCell.classList = "cell occupied left-hori";
+  } else if (index == length - 1)
+    currentCell.classList = "cell occupied right-hori";
+  else currentCell.classList = "cell occupied inner-hori";
+}
+
+function highlightDown(currentCell, index, length) {
+  if (index == 0) {
+    currentCell.classList = "cell occupied right-hori";
+  } else if (index == length - 1)
+    currentCell.classList = "cell occupied left-hori";
+  else currentCell.classList = "cell occupied inner-hori";
+}
+
+// build dragImage based on ship coordinates and direction
+function constructDragImage(ship) {
+  const dragImage = document.createElement("div");
+  dragImage.style.display = "grid";
+  if (ship.direction == "up" || ship.direction == "down")
+    dragImage.style.gridTemplateColumns = `repeat(${ship.size}, 1fr)`;
+  if (ship.direction == "left" || ship.direction == "right")
+    dragImage.style.gridTemplateRows = `repeat(${ship.size}, 1fr)`;
+
+  dragImage.style.maxWidth = "min-content";
+  const cellRect = document.querySelector(".cell").getBoundingClientRect();
+
+  for (let i = 0; i < ship.size; i++) {
+    const dragCell = document.createElement("div");
+    dragCell.classList = "cell occupied";
+    dragCell.style.width = `${cellRect.width}px`;
+    dragCell.style.height = `${cellRect.height}px`;
+    dragCell.style.backgroundColor = `var(--secondary-background-color)`;
+    dragImage.appendChild(dragCell);
+  }
+  return dragImage;
+}
+
+function dragImageLeft() {}
+function dragImageRight() {}
+function dragImageUp() {}
+function dragImageDown() {}
 export { Renderer };
